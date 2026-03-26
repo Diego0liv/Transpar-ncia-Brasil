@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transparência Brasil — Dados do Governo em Tempo Real</title>
+  <link rel="stylesheet" href="styles.css?v=5" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">🇧🇷 Transparência<span> Brasil</span></div>
+  <div class="nav-links">
+    <a href="#painel">Indicadores</a>
+    <a href="#ranking">Estados</a>
+
+    <!-- EXECUTIVO -->
+    <div class="nav-dropdown">
+      <a href="#presidentes" class="nav-drop-trigger">Executivo ▾</a>
+      <div class="nav-dropdown-menu exe">
+        <div class="drop-header">🟢 Poder Executivo</div>
+        <a href="#presidentes">🏛️ Presidente da República</a>
+        <a href="#ministros">📋 Ministros de Estado</a>
+        <a href="#governadores">🗺️ Governadores</a>
+        <a class="soon">🏙️ Prefeitos <span class="soon-tag">Em breve</span></a>
+      </div>
+    </div>
+
+    <!-- LEGISLATIVO -->
+    <div class="nav-dropdown">
+      <a href="#senadores" class="nav-drop-trigger">Legislativo ▾</a>
+      <div class="nav-dropdown-menu leg">
+        <div class="drop-header">🔵 Poder Legislativo</div>
+        <div class="drop-sub">Congresso Nacional</div>
+        <a href="#senadores">🏛️ Senado Federal</a>
+        <a href="#politicos">🏛️ Câmara dos Deputados</a>
+        <div class="drop-sub">Ferramentas</div>
+        <a href="#ranking-politicos">📊 Ranking de Políticos</a>
+        <a href="#comparador-pol">⚖️ Comparar Políticos</a>
+        <div class="drop-sep"></div>
+        <a class="soon">🏛️ Assembleias Estaduais <span class="soon-tag">Em breve</span></a>
+        <a class="soon">🏛️ Câmaras Municipais <span class="soon-tag">Em breve</span></a>
+      </div>
+    </div>
+
+    <!-- JUDICIÁRIO -->
+    <div class="nav-dropdown">
+      <a href="#judiciario" class="nav-drop-trigger">Judiciário ▾</a>
+      <div class="nav-dropdown-menu jud">
+        <div class="drop-header">🟣 Poder Judiciário</div>
+        <a href="#judiciario">⚖️ STF — Supremo Tribunal Federal</a>
+        <a class="soon">⚖️ STJ — Superior Tribunal de Justiça <span class="soon-tag">Em breve</span></a>
+        <a class="soon">⚖️ Tribunais Regionais <span class="soon-tag">Em breve</span></a>
+        <a class="soon">⚖️ Tribunais de Justiça <span class="soon-tag">Em breve</span></a>
+      </div>
+    </div>
+
+    <a href="#municipios">Municípios</a>
+    <a href="#roadmap">Roadmap</a>
+  </div>
+  <button class="nav-menu-btn"
+          aria-label="Abrir menu de navegação"
+          aria-expanded="false"
+          aria-controls="mobileMenu"
+          onclick="toggleMobileMenu(this)">☰</button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#painel"           onclick="toggleMobileMenu()">Indicadores</a>
+  <a href="#ranking"          onclick="toggleMobileMenu()">Estados</a>
+  <div class="mob-group-label exe">🟢 Executivo</div>
+  <a href="#presidentes"      onclick="toggleMobileMenu()">Presidente</a>
+  <a href="#ministros"        onclick="toggleMobileMenu()">Ministros</a>
+  <a href="#governadores"     onclick="toggleMobileMenu()">Governadores</a>
+  <div class="mob-group-label leg">🔵 Legislativo</div>
+  <a href="#senadores"        onclick="toggleMobileMenu()">Senado Federal</a>
+  <a href="#politicos"        onclick="toggleMobileMenu()">Câmara dos Deputados</a>
+  <a href="#ranking-politicos" onclick="toggleMobileMenu()">Ranking de Políticos</a>
+  <a href="#comparador-pol"   onclick="toggleMobileMenu()">Comparar Políticos</a>
+  <div class="mob-group-label jud">🟣 Judiciário</div>
+  <a href="#judiciario"       onclick="toggleMobileMenu()">STF</a>
+  <div class="mob-group-label" style="background:var(--gray-100);color:var(--gray-text)">📍 Outros</div>
+  <a href="#municipios"       onclick="toggleMobileMenu()">Municípios</a>
+  <a href="#roadmap"          onclick="toggleMobileMenu()">Roadmap</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-content">
+    <div class="hero-badge">Plataforma Nacional de Dados Públicos — Fase 4</div>
+    <h1>Dados do Governo<br><em>Simples e Visíveis</em></h1>
+    <p>Estados, políticos, municípios e os 3 poderes em um só lugar. Fonte: IBGE, Câmara, Senado, STF.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">27</div><div class="label">Estados</div></div>
+      <div class="hero-stat"><div class="num">668</div><div class="label">Políticos</div></div>
+      <div class="hero-stat"><div class="num">5.570</div><div class="label">Municípios</div></div>
+      <div class="hero-stat">
+        <div class="num"><span id="apiStatusHero" class="api-status checking"><span class="api-dot"></span> API</span></div>
+        <div class="label">Backend</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAINEL NACIONAL -->
+<section id="painel">
+  <span class="section-label">Médias Nacionais</span>
+  <h2 class="section-title">Painel de Indicadores</h2>
+  <p class="section-sub">Scores normalizados de 0–100. Calculados com dados reais do IBGE, INEP e FBSP.</p>
+  <div class="painel-grid">
+    <div class="painel-card edu">
+      <div class="painel-icon">📚</div>
+      <h3>Educação</h3>
+      <div class="painel-val" id="pEdu">—</div>
+      <div class="painel-sub">Score médio nacional (IDEB 2021)</div>
+      <span class="painel-trend trend-up" id="pEduTrend"></span>
+    </div>
+    <div class="painel-card sau">
+      <div class="painel-icon">🏥</div>
+      <h3>Saúde</h3>
+      <div class="painel-val" id="pSau">—</div>
+      <div class="painel-sub">Score médio nacional</div>
+      <span class="painel-trend trend-up" id="pSauTrend"></span>
+    </div>
+    <div class="painel-card seg">
+      <div class="painel-icon">🔒</div>
+      <h3>Segurança</h3>
+      <div class="painel-val" id="pSeg">—</div>
+      <div class="painel-sub">Score médio nacional (FBSP 2023)</div>
+      <span class="painel-trend" id="pSegTrend"></span>
+    </div>
+    <div class="painel-card eco">
+      <div class="painel-icon">💰</div>
+      <h3>Economia</h3>
+      <div class="painel-val" id="pEco">—</div>
+      <div class="painel-sub">Score médio nacional (PNAD 2024)</div>
+      <span class="painel-trend trend-up" id="pEcoTrend"></span>
+    </div>
+  </div>
+</section>
+
+<!-- RANKING ESTADOS -->
+<section id="ranking">
+  <div class="ranking-header">
+    <div>
+      <span class="section-label">Classificação</span>
+      <h2 class="section-title">Ranking dos Estados</h2>
+      <p class="section-sub">Clique em um estado para ver o painel detalhado.</p>
+    </div>
+    <div class="filter-row">
+      <button class="filter-tab active" onclick="filtrar('todos',this)">Todos</button>
+      <button class="filter-tab" onclick="filtrar('N',this)">Norte</button>
+      <button class="filter-tab" onclick="filtrar('NE',this)">Nordeste</button>
+      <button class="filter-tab" onclick="filtrar('CO',this)">Centro-Oeste</button>
+      <button class="filter-tab" onclick="filtrar('SE',this)">Sudeste</button>
+      <button class="filter-tab" onclick="filtrar('S',this)">Sul</button>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table class="ranking">
+      <thead>
+        <tr>
+          <th>#</th><th>Estado</th><th>Região</th>
+          <th>📚 Educação</th><th>🏥 Saúde</th><th>🔒 Segurança</th><th>💰 Economia</th>
+          <th>⭐ Score</th>
+        </tr>
+      </thead>
+      <tbody id="rankingBody">
+        <tr><td colspan="8" style="padding:40px;text-align:center"><span class="spinner"></span> Carregando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- COMPARAR ESTADOS -->
+<section id="comparar">
+  <span class="section-label">Análise</span>
+  <h2 class="section-title">Comparar Estados</h2>
+  <p class="section-sub">Digite as siglas separadas por vírgula para comparar lado a lado.</p>
+  <div class="comparar-form">
+    <input id="inputComparar" type="text" placeholder="Ex: SP, RJ, MG, SC" maxlength="50" />
+    <button class="btn-comparar" onclick="compararEstados()">Comparar</button>
+  </div>
+  <div class="comparar-resultado" id="compResultado">
+    <div class="comparar-cards" id="compCards"></div>
+    <div class="chart-area">
+      <h4>Comparação Visual</h4>
+      <canvas id="chartComparar" height="90"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- HISTÓRICO -->
+<section id="historico">
+  <span class="section-label">Evolução 2000–2024</span>
+  <h2 class="section-title">Comparação Histórica</h2>
+  <p class="section-sub">Compare a evolução de estados ao longo dos anos.</p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin:24px 0;align-items:center">
+    <input id="histUFs" type="text" placeholder="Estados: SC, SP, BA, CE..." style="flex:1;min-width:200px;padding:9px 14px;border:2px solid var(--gray-100);border-radius:10px;font-size:.9rem;outline:none" />
+    <select id="histIndicador" style="padding:9px 14px;border:2px solid var(--gray-100);border-radius:10px;font-size:.9rem;background:var(--white);outline:none">
+      <option value="ideb_anos_finais">IDEB — Anos Finais</option>
+      <option value="rendimento_medio_mensal">Rendimento Médio (R$)</option>
+      <option value="mortalidade_infantil">Mortalidade Infantil</option>
+      <option value="homicidios_100k">Homicídios / 100k hab.</option>
+    </select>
+    <button class="btn-buscar" onclick="carregarHistorico()">Comparar</button>
+  </div>
+  <div style="background:var(--white);border-radius:16px;padding:24px;box-shadow:var(--shadow)">
+    <canvas id="chartHistorico" height="80"></canvas>
+  </div>
+  <div id="histTabela" style="margin-top:20px"></div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- DIVISOR — EXECUTIVO                        -->
+<!-- ══════════════════════════════════════════ -->
+<div class="poder-divider executivo">
+  <div class="poder-divider-icon">🟢</div>
+  <div class="poder-divider-content">
+    <div class="poder-divider-title">Poder Executivo</div>
+    <div class="poder-divider-sub">Presidente · Ministros · Governadores</div>
+  </div>
+  <div class="poder-divider-tree">
+    <span class="tree-node active">Presidente</span>
+    <span class="tree-arrow">›</span>
+    <span class="tree-node active">Ministros</span>
+    <span class="tree-arrow">›</span>
+    <span class="tree-node active">Governadores</span>
+    <span class="tree-arrow">›</span>
+    <span class="tree-node soon">Prefeitos</span>
+  </div>
+</div>
+
+<!-- PRESIDENTES -->
+<section id="presidentes" style="background:var(--white)">
+  <span class="section-label">Chefe de Estado e de Governo</span>
+  <h2 class="section-title">Presidentes da República — 1985 a 2027</h2>
+  <p class="section-sub">Linha do tempo dos presidentes da redemocratização até hoje.</p>
+  <div id="presTimeline" style="margin-top:32px;position:relative"></div>
+</section>
+
+<!-- MINISTROS -->
+<section id="ministros" style="background:var(--gray-bg)">
+  <span class="section-label">Governo Federal</span>
+  <h2 class="section-title">Ministros de Estado — Governo Lula III</h2>
+  <p class="section-sub">Ministros em exercício. Orçamento gerenciado e execução orçamentária.</p>
+  <div class="pol-grid" id="minGrid" style="margin-top:24px">
+    <div style="grid-column:1/-1;text-align:center;padding:30px"><span class="spinner"></span></div>
+  </div>
+</section>
+
+<!-- GOVERNADORES -->
+<section id="governadores" style="background:var(--white)">
+  <span class="section-label">Executivo Estadual</span>
+  <h2 class="section-title">Governadores</h2>
+  <p class="section-sub">27 governadores em exercício (2023–2026). Clique para ver os indicadores do estado.</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:20px 0" id="govPartidoFiltros"></div>
+  <div class="pol-grid" id="govGrid" style="margin-top:16px">
+    <div style="grid-column:1/-1;text-align:center;padding:30px"><span class="spinner"></span></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- DIVISOR — LEGISLATIVO                      -->
+<!-- ══════════════════════════════════════════ -->
+<div class="poder-divider legislativo">
+  <div class="poder-divider-icon">🔵</div>
+  <div class="poder-divider-content">
+    <div class="poder-divider-title">Poder Legislativo</div>
+    <div class="poder-divider-sub">Congresso Nacional · Senado · Câmara dos Deputados</div>
+  </div>
+  <div class="poder-divider-tree">
+    <span class="tree-node active">Senado</span>
+    <span class="tree-arrow">›</span>
+    <span class="tree-node active">Câmara</span>
+    <span class="tree-arrow">›</span>
+    <span class="tree-node soon">Assembleias</span>
+    <span class="tree-arrow">›</span>
+    <span class="tree-node soon">Câmaras Municipais</span>
+  </div>
+</div>
+
+<!-- SENADORES -->
+<section id="senadores" style="background:var(--white)">
+  <span class="section-label">Câmara Alta — 81 Senadores</span>
+  <h2 class="section-title">Senado Federal</h2>
+  <p class="section-sub">81 senadores federais. Clique para ver votações e perfil.</p>
+  <div class="pol-controls" style="margin:20px 0">
+    <select id="senFiltroUF" onchange="carregarSenadores(1)">
+      <option value="">Todos os estados</option>
+      <option>AC</option><option>AL</option><option>AM</option><option>AP</option>
+      <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+      <option>GO</option><option>MA</option><option>MG</option><option>MS</option>
+      <option>MT</option><option>PA</option><option>PB</option><option>PE</option>
+      <option>PI</option><option>PR</option><option>RJ</option><option>RN</option>
+      <option>RO</option><option>RR</option><option>RS</option><option>SC</option>
+      <option>SE</option><option>SP</option><option>TO</option>
+    </select>
+    <input id="senFiltroPartido" type="text" placeholder="Filtrar por partido..." oninput="debounce('senador')" />
+    <input id="senBusca" type="text" placeholder="Buscar por nome..." oninput="debounce('senador')" />
+    <button class="btn-buscar" onclick="carregarSenadores(1)">Buscar</button>
+  </div>
+  <div class="pol-grid" id="senGrid">
+    <div style="grid-column:1/-1;padding:40px;text-align:center"><span class="spinner"></span> Carregando...</div>
+  </div>
+  <div class="pol-paginacao" id="senPaginacao"></div>
+</section>
+
+<!-- DEPUTADOS FEDERAIS -->
+<section id="politicos" style="background:var(--gray-bg)">
+  <span class="section-label">Câmara Baixa — 513 Deputados</span>
+  <h2 class="section-title">Câmara dos Deputados</h2>
+  <p class="section-sub">513 deputados federais. Clique em um político para ver votações e perfil.</p>
+
+  <div class="pol-stats" id="polStats">
+    <div class="pol-stat-box"><div class="n" id="totalDep">—</div><div class="l">Deputados Federais</div></div>
+    <div class="pol-stat-box"><div class="n" id="totalSen">—</div><div class="l">Senadores</div></div>
+    <div class="pol-stat-box"><div class="n" id="totalVotos">—</div><div class="l">Votações registradas</div></div>
+    <div class="pol-stat-box"><div class="n" id="totalPartidos">—</div><div class="l">Partidos</div></div>
+  </div>
+
+  <div class="pol-controls">
+    <select id="filtroUF" onchange="buscarPoliticos(1)">
+      <option value="">Todos os estados</option>
+      <option>AC</option><option>AL</option><option>AM</option><option>AP</option>
+      <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+      <option>GO</option><option>MA</option><option>MG</option><option>MS</option>
+      <option>MT</option><option>PA</option><option>PB</option><option>PE</option>
+      <option>PI</option><option>PR</option><option>RJ</option><option>RN</option>
+      <option>RO</option><option>RR</option><option>RS</option><option>SC</option>
+      <option>SE</option><option>SP</option><option>TO</option>
+    </select>
+    <input id="filtroPartido" type="text" placeholder="Filtrar por partido..." oninput="debounce()" />
+    <button class="btn-buscar" onclick="buscarPoliticos(1)">Buscar</button>
+  </div>
+
+  <div class="pol-grid" id="polGrid">
+    <div style="grid-column:1/-1;padding:40px;text-align:center"><span class="spinner"></span> Carregando...</div>
+  </div>
+  <div class="pol-paginacao" id="polPaginacao"></div>
+</section>
+
+<!-- RANKING POLÍTICOS -->
+<section id="ranking-politicos" style="background:var(--white)">
+  <span class="section-label">Desempenho Parlamentar</span>
+  <h2 class="section-title">Ranking de Políticos</h2>
+  <p class="section-sub">Parlamentares ordenados por presença e atividade. Fonte: Câmara e Senado Federal.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin:20px 0;align-items:center">
+    <select id="rankPolCargo" onchange="carregarRankingPoliticos()" style="padding:8px 14px;border:2px solid var(--gray-100);border-radius:10px;font-size:.88rem;background:var(--white);outline:none">
+      <option value="senador">Senadores</option>
+      <option value="deputado_federal">Deputados Federais</option>
+    </select>
+    <select id="rankPolUF" onchange="carregarRankingPoliticos()" style="padding:8px 14px;border:2px solid var(--gray-100);border-radius:10px;font-size:.88rem;background:var(--white);outline:none">
+      <option value="">Todos os estados</option>
+      <option>AC</option><option>AL</option><option>AM</option><option>AP</option>
+      <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+      <option>GO</option><option>MA</option><option>MG</option><option>MS</option>
+      <option>MT</option><option>PA</option><option>PB</option><option>PE</option>
+      <option>PI</option><option>PR</option><option>RJ</option><option>RN</option>
+      <option>RO</option><option>RR</option><option>RS</option><option>SC</option>
+      <option>SE</option><option>SP</option><option>TO</option>
+    </select>
+    <select id="rankPolOrdem" onchange="carregarRankingPoliticos()" style="padding:8px 14px;border:2px solid var(--gray-100);border-radius:10px;font-size:.88rem;background:var(--white);outline:none">
+      <option value="desc">Mais presentes primeiro</option>
+      <option value="asc">Menos presentes primeiro</option>
+    </select>
+  </div>
+  <div class="table-wrap">
+    <table class="ranking" id="rankPolTable">
+      <thead>
+        <tr>
+          <th>#</th><th>Nome</th><th>Partido · UF</th>
+          <th>Presença</th><th>Votos Registrados</th>
+        </tr>
+      </thead>
+      <tbody id="rankPolBody">
+        <tr><td colspan="5" style="padding:40px;text-align:center"><span class="spinner"></span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- COMPARADOR DE POLÍTICOS -->
+<section id="comparador-pol" style="background:var(--gray-bg)">
+  <span class="section-label">Análise Comparativa</span>
+  <h2 class="section-title">Comparar Políticos</h2>
+  <p class="section-sub">Digite os nomes para comparar desempenho, presença e alinhamento lado a lado (máx. 4).</p>
+  <div class="comparador-busca">
+    <input id="compPolInput1" type="text" placeholder="Nome do 1º político..." />
+    <input id="compPolInput2" type="text" placeholder="Nome do 2º político..." />
+    <input id="compPolInput3" type="text" placeholder="Nome do 3º (opcional)..." />
+    <button class="btn-comparar" onclick="compararPoliticos()">Comparar</button>
+  </div>
+  <div id="compPolResultado"></div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- DIVISOR — JUDICIÁRIO                       -->
+<!-- ══════════════════════════════════════════ -->
+<div class="poder-divider judiciario">
+  <div class="poder-divider-icon">🟣</div>
+  <div class="poder-divider-content">
+    <div class="poder-divider-title">Poder Judiciário</div>
+    <div class="poder-divider-sub">STF · STJ · Tribunais Regionais · Tribunais de Justiça</div>
+  </div>
+  <div class="poder-divider-tree">
+    <span class="tree-node active">STF</span>
+    <span class="tree-arrow">›</span>
+    <span class="tree-node soon">STJ</span>
+    <span class="tree-arrow">›</span>
+    <span class="tree-node soon">Tribunais Regionais</span>
+    <span class="tree-arrow">›</span>
+    <span class="tree-node soon">TJ Estaduais</span>
+  </div>
+</div>
+
+<!-- STF -->
+<section id="judiciario" style="background:var(--white)">
+  <span class="section-label">Corte Suprema</span>
+  <h2 class="section-title">Supremo Tribunal Federal</h2>
+  <p class="section-sub">11 ministros do STF. Perfil decisório, independência e atuação nos principais casos.</p>
+  <div class="pol-controls" style="justify-content:flex-start;flex-wrap:wrap;gap:8px" id="stfFiltros">
+    <button class="filter-tab active" onclick="filtrarSTF('',this)">Todos</button>
+    <button class="filter-tab" onclick="filtrarSTF('garantista',this)">Garantistas</button>
+    <button class="filter-tab" onclick="filtrarSTF('equilibrado',this)">Equilibrados</button>
+    <button class="filter-tab" onclick="filtrarSTF('punitivista',this)">Punitivistas</button>
+  </div>
+  <div class="stf-grid" id="stfGrid">
+    <div style="grid-column:1/-1;padding:40px;text-align:center"><span class="spinner"></span> Carregando...</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- MUNICÍPIOS                                 -->
+<!-- ══════════════════════════════════════════ -->
+<section id="municipios" style="background:var(--gray-bg)">
+  <span class="section-label">5.570 Cidades Brasileiras</span>
+  <h2 class="section-title">Municípios</h2>
+  <p class="section-sub">Ranking de cidades por indicadores de educação, saúde, segurança e economia. Fonte: IBGE.</p>
+
+  <div class="pol-controls" style="flex-wrap:wrap;gap:8px">
+    <select id="munUF" onchange="carregarMunicipios(1)" style="padding:8px 14px;border:2px solid var(--gray-100);border-radius:10px;font-size:.88rem;background:var(--white);outline:none">
+      <option value="">Todos os estados</option>
+      <option>AC</option><option>AL</option><option>AM</option><option>AP</option>
+      <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+      <option>GO</option><option>MA</option><option>MG</option><option>MS</option>
+      <option>MT</option><option>PA</option><option>PB</option><option>PE</option>
+      <option>PI</option><option>PR</option><option>RJ</option><option>RN</option>
+      <option>RO</option><option>RR</option><option>RS</option><option>SC</option>
+      <option>SE</option><option>SP</option><option>TO</option>
+    </select>
+    <select id="munRegiao" onchange="carregarMunicipios(1)" style="padding:8px 14px;border:2px solid var(--gray-100);border-radius:10px;font-size:.88rem;background:var(--white);outline:none">
+      <option value="">Todas as regiões</option>
+      <option value="N">Norte</option>
+      <option value="NE">Nordeste</option>
+      <option value="CO">Centro-Oeste</option>
+      <option value="SE">Sudeste</option>
+      <option value="S">Sul</option>
+    </select>
+    <select id="munOrdem" onchange="carregarMunicipios(1)" style="padding:8px 14px;border:2px solid var(--gray-100);border-radius:10px;font-size:.88rem;background:var(--white);outline:none">
+      <option value="score">Melhor score</option>
+      <option value="populacao">Maior população</option>
+      <option value="nome">Nome A–Z</option>
+    </select>
+    <input id="munBusca" type="text" placeholder="Buscar município..." oninput="debounceMun()"
+      style="padding:8px 14px;border:2px solid var(--gray-100);border-radius:10px;font-size:.88rem;outline:none;min-width:200px" />
+  </div>
+
+  <div class="pol-stats" id="munStats" style="margin:16px 0">
+    <div class="pol-stat-box"><div class="n" id="munTotal">—</div><div class="l">Municípios</div></div>
+    <div class="pol-stat-box"><div class="n" id="munMediaScore">—</div><div class="l">Score médio</div></div>
+    <div class="pol-stat-box"><div class="n" id="munMelhor">—</div><div class="l">Melhor cidade</div></div>
+    <div class="pol-stat-box"><div class="n" id="munPior">—</div><div class="l">Precisa de atenção</div></div>
+  </div>
+
+  <div class="pol-grid" id="munGrid">
+    <div style="grid-column:1/-1;padding:40px;text-align:center"><span class="spinner"></span> Carregando...</div>
+  </div>
+  <div class="pol-paginacao" id="munPaginacao"></div>
+</section>
+
+<!-- MODAL POLÍTICO -->
+<div class="modal-overlay" id="modalPolOverlay" onclick="fecharModalPol(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-pol-header">
+        <img id="modalPolFoto" class="modal-pol-foto" src="" alt="" />
+        <div>
+          <h2 id="modalPolNome" style="font-size:1.3rem"></h2>
+          <div class="sub" id="modalPolSub"></div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="fecharModalPol()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="scores-grid" style="margin-bottom:20px" id="modalPolScores"></div>
+      <h4 style="font-size:.9rem;font-weight:700;color:var(--blue);margin-bottom:10px">Resumo de Votos</h4>
+      <div class="votos-resumo" id="modalPolVotosResumo"></div>
+      <h4 style="font-size:.9rem;font-weight:700;color:var(--blue);margin-bottom:10px">Últimas Votações</h4>
+      <div class="votacoes-lista" id="modalPolVotacoes"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALHE ESTADO -->
+<div class="modal-overlay" id="modalOverlay" onclick="fecharModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalNome"></h2>
+      <div class="sub" id="modalSub"></div>
+      <button class="modal-close" onclick="fecharModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="score-geral-box">
+        <div>
+          <div class="score-num-big" id="modalScoreGeral">—</div>
+          <div class="score-label">Score Geral (0–100)</div>
+        </div>
+        <div style="flex:1">
+          <canvas id="chartRadar" height="160"></canvas>
+        </div>
+      </div>
+      <div class="scores-grid" id="scoresGrid"></div>
+      <div class="ind-list" id="indList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MUNICÍPIO -->
+<div class="modal-overlay" id="modalMunOverlay" onclick="fecharModalMun(event)">
+  <div class="modal">
+    <div class="modal-header" style="background:linear-gradient(135deg,#1a5fb4,#003a99)">
+      <div>
+        <h2 id="modalMunNome" style="font-size:1.3rem"></h2>
+        <div class="sub" id="modalMunSub"></div>
+      </div>
+      <button class="modal-close" onclick="fecharModalMun()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="scores-grid" style="margin-bottom:20px" id="modalMunScores"></div>
+      <div style="max-width:340px;margin:0 auto 20px">
+        <canvas id="chartMunRadar" height="220"></canvas>
+      </div>
+      <div id="modalMunInfo"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="center">
+    <span class="section-label">Fases do Projeto</span>
+    <h2 class="section-title">Roadmap</h2>
+    <p class="section-sub">Plataforma nacional construída em fases incrementais.</p>
+  </div>
+  <div class="roadmap-grid">
+    <div class="road-card done">
+      <div class="road-phase">Fase 1</div>
+      <h4>Fundação MVP</h4>
+      <p>Estados, ranking, banco SQLite, API FastAPI</p>
+      <span class="road-tag tag-done">✓ Concluída</span>
+    </div>
+    <div class="road-card done">
+      <div class="road-phase">Fase 2</div>
+      <h4>Indicadores Completos</h4>
+      <p>Educação, saúde, segurança, economia — scores normalizados</p>
+      <span class="road-tag tag-done">✓ Concluída</span>
+    </div>
+    <div class="road-card done">
+      <div class="road-phase">Fase 3</div>
+      <h4>Dados Políticos + 3 Poderes</h4>
+      <p>Deputados, senadores, governadores, ministros, presidentes e STF</p>
+      <span class="road-tag tag-done">✓ Concluída</span>
+    </div>
+    <div class="road-card done">
+      <div class="road-phase">Fase 4</div>
+      <h4>Municípios</h4>
+      <p>5.570 cidades com ranking e dados locais</p>
+      <span class="road-tag tag-done">✓ Concluída</span>
+    </div>
+    <div class="road-card active">
+      <div class="road-phase">Fase 5</div>
+      <h4>Mapa Interativo</h4>
+      <p>SVG clicável por estado e cidade</p>
+      <span class="road-tag tag-active">● Próxima</span>
+    </div>
+    <div class="road-card">
+      <div class="road-phase">Fase 6</div>
+      <h4>Dashboard Pro</h4>
+      <p>Gráficos, filtros e série histórica</p>
+      <span class="road-tag tag-next">Planejada</span>
+    </div>
+    <div class="road-card">
+      <div class="road-phase">Fase 7</div>
+      <h4>Dinheiro Público</h4>
+      <p>Emendas, contratos, gastos por estado</p>
+      <span class="road-tag tag-next">Planejada</span>
+    </div>
+    <div class="road-card">
+      <div class="road-phase">Fase 8</div>
+      <h4>Inteligência</h4>
+      <p>IA para tendências e análise de discursos</p>
+      <span class="road-tag tag-next">Planejada</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 <strong>Transparência Brasil</strong> — Fontes: IBGE, INEP, FBSP, Portal da Transparência.</p>
+  <p style="margin-top:6px">
+    API: <span id="apiDocsLink"><a href="http://localhost:8000/docs" target="_blank">localhost:8000/docs</a></span>
+  </p>
+</footer>
+
+<script src="app.js?v=10"></script>
+</body>
+</html>
