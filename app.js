@@ -1,4 +1,4 @@
-const API = 'http://localhost:8000';
+const API = 'const API_URL = "https://transpar-ncia-brasil-production.up.railway.app";';
 let todosEstados = [];
 let filtroAtivo  = 'todos';
 let chartComparar = null;
